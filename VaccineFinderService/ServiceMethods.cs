@@ -829,6 +829,7 @@ namespace VaccineFinderService
                 }
                 errMsg.AppendLine();
                 errMsg.AppendLine();
+                //errMsg.AppendLine("Hurry book your slot at: https://selfregistration.cowin.gov.in/");
             }
             errMsg.AppendLine("Regards,");
             errMsg.AppendLine("Service Bot");
