@@ -299,6 +299,8 @@ namespace VaccineFinderService
                     List<List<string>> faridabadFinalList = new List<List<string>>();
                     List<List<string>> sonipatFinalList = new List<List<string>>();
                     List<List<string>> hyderabadFinalList = new List<List<string>>();
+                    List<List<string>> puneFinalList = new List<List<string>>();
+                    List<List<string>> mumbaiFinalList = new List<List<string>>();
                     #endregion
 
                     #region Data Filtering 
@@ -461,6 +463,46 @@ namespace VaccineFinderService
                                 }
                             }
                             #endregion
+
+                            #region Maharashtra
+                            if (center.district_name.ToLower() == "pune")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        puneFinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "mumbai")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        mumbaiFinalList.Add(list);
+                                    }
+                                }
+                            }
+                            #endregion
                         }
                     }
                     #endregion
@@ -497,6 +539,14 @@ namespace VaccineFinderService
                     if (hyderabadFinalList.Count > 0)
                     {
                         sent = SendMail(null, "Hyderabad", hyderabadFinalList.ToList());
+                    }
+                    if (puneFinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "Pune", puneFinalList.ToList());
+                    }
+                    if (mumbaiFinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "Mumbai", mumbaiFinalList.ToList());
                     }
                     #endregion
                 }
@@ -540,10 +590,12 @@ namespace VaccineFinderService
                 string _FaridabadEmailTo = Convert.ToString(ConfigurationManager.AppSettings["FaridabadEmailTo"]);
                 string _SonipatEmailTo = Convert.ToString(ConfigurationManager.AppSettings["SonipatEmailTo"]);
                 string _HyderabadEmailTo = Convert.ToString(ConfigurationManager.AppSettings["HyderabadEmailTo"]);
+                string _PuneEmailTo = Convert.ToString(ConfigurationManager.AppSettings["PuneEmailTo"]);
+                string _MumbaiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["MumbaiEmailTo"]);
                 #endregion
                 MailMessage msg = new MailMessage();
                 msg.From = new MailAddress(fromaddr);
-                #region Email Type: System, Ritvik, Agra, Delhi, Karnal, Faridabad, Sonipat, STOP, START, Exception
+                #region Email Type: System, Ritvik, Agra, Delhi, Karnal, Faridabad, Sonipat, Hyderabad, Pune, Mumbai, STOP, START, Exception
                 if (emailType == "System")
                 {
                     msg.Subject = "System alert at: " + DateTime.Now.ToString();
@@ -626,6 +678,28 @@ namespace VaccineFinderService
                     msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
                     msg.Body = emailStringBuilder(null, listString);
                     foreach (var address in _HyderabadEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "Pune")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _PuneEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "Mumbai")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _MumbaiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         LogWrite("******************* Email sent to: " + address);
                         msg.Bcc.Add(address);
