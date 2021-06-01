@@ -32,6 +32,9 @@ namespace VaccineFinderService
         private DateTime dateTime;
         private DateTime dateTime_1 = DateTime.Now.AddHours(Convert.ToDouble(ConfigurationManager.AppSettings["SystemMailTimeInHours"]));
         private static Dictionary<int, string> URLs { get; set; }
+        private static Dictionary<string, string> Emails { get; set; }
+        private static Dictionary<string, List<List<string>>> DynamicList { get; set; }
+
         #endregion
 
         public ServiceMethods()
@@ -55,7 +58,7 @@ namespace VaccineFinderService
                 Utility(dateTime_1);
             }
 
-            APIInitiator_3();
+            //APIInitiator_3();
         }
 
         public void Start()
@@ -326,20 +329,21 @@ namespace VaccineFinderService
                                         finalList.Add(list);
                                     }
                                 }
-                            }
-                            foreach (var sess in center.sessions)
-                            {
-                                if (sess.min_age_limit == 18 && sess.available_capacity_dose2 > 5 && sess.vaccine.ToUpper() == "COVAXIN")
+
+                                foreach (var sess in center.sessions)
                                 {
-                                    List<string> list = new List<string>();
-                                    list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
-                                    list.Add("Vaccine: " + sess.vaccine);
-                                    list.Add("Center Name: " + center.name);
-                                    list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
-                                    list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
-                                    list.Add("Available Capacity: " + sess.available_capacity.ToString());
-                                    list.Add("Available Capacity of Dose 2 for " + sess.min_age_limit + "+: " + sess.available_capacity_dose2.ToString());
-                                    ritvikFinalList.Add(list);
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose2 > 5 && sess.vaccine.ToUpper() == "COVAXIN")
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 2 for " + sess.min_age_limit + "+: " + sess.available_capacity_dose2.ToString());
+                                        ritvikFinalList.Add(list);
+                                    }
                                 }
                             }
                             #endregion
@@ -564,6 +568,161 @@ namespace VaccineFinderService
                     #endregion
                 }
             }
+        }
+
+        public static void APIInitiator_4()
+        {
+            string _OneSetting = Convert.ToString(ConfigurationManager.AppSettings["OneSetting"]);
+            if (!string.IsNullOrWhiteSpace(_OneSetting))
+            {
+                LogWrite("\r\n\n\n\n****************** Log Started ******************");
+                int _APIHitCounter = 1;
+                string urlParameter = string.Empty;
+                Root result = new Root();
+                List<Root> root = new List<Root>();
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("http://cdn-api.co-vin.in/");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+                URLs = new Dictionary<int, string>();
+                Emails = new Dictionary<string, string>();
+                foreach (var i in _OneSetting.Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var j = i.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                    URLs.Add(Convert.ToInt32(j[0]), "api/v2/appointment/sessions/public/calendarByDistrict?district_id=" + j[0] + "&date=#DateHere");
+                    Emails.Add(j[1], j[2]);
+                }
+                try
+                {
+                    foreach (var URL in URLs)
+                    {
+                        string date = DateTime.Now.ToString("dd-MM-yyyy");
+                        string _DateFor108 = DateTime.Now.AddDays(Convert.ToDouble(ConfigurationManager.AppSettings["DateFor108"])).ToString("dd-MM-yyyy");
+                        for (int a = 0; a < 5; a--)
+                        {
+                            if (URL.Key == 108)
+                                urlParameter = URL.Value.Replace("#DateHere", _DateFor108);
+                            else
+                                urlParameter = URL.Value.Replace("#DateHere", date);
+                            var task = client.GetAsync(urlParameter);
+                            task.Wait();
+                            var response = task.Result;
+                            if (response.IsSuccessStatusCode)
+                            {
+                                LogWrite("Number of API Hit for URL: [" + urlParameter + "] is " + Convert.ToString(_APIHitCounter++));
+                                var readTask = response.Content.ReadAsStringAsync();
+                                readTask.Wait();
+                                result = JsonConvert.DeserializeObject<Root>(readTask.Result);
+
+                                if (result.centers.Count > 0)
+                                {
+                                    root.Add(result);
+                                    DateTime date1 = Convert.ToDateTime(date).AddDays(1);
+                                    date = date1.ToString("dd-MM-yyyy");
+                                    if (URL.Key == 108)
+                                    {
+                                        DateTime _DateFor108_2 = Convert.ToDateTime(_DateFor108).AddDays(1);
+                                        _DateFor108 = _DateFor108_2.ToString("dd-MM-yyyy");
+                                    }
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                LogWrite("API Error StatusCode: " + response.StatusCode.ToString());
+                                LogWrite("API Error RequestMessage: " + response.RequestMessage.ToString());
+                                break;
+                            }
+                        }
+                    }
+                    DynamicList = new Dictionary<string, List<List<string>>>();
+                    #region Data Filtering
+                    foreach (var i in Emails)
+                    {
+                        List<List<string>> finalList = new List<List<string>>();
+                        foreach (var r in root)
+                        {
+                            foreach (var center in r.centers)
+                            {
+                                if (center.district_name.ToLower() == i.Key.ToLower())
+                                {
+                                    foreach (var sess in center.sessions)
+                                    {
+                                        if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                        {
+                                            List<string> list = new List<string>();
+                                            list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                            list.Add("Vaccine: " + sess.vaccine);
+                                            list.Add("Center Name: " + center.name);
+                                            list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                            list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                            list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                            list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                            finalList.Add(list);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        DynamicList.Add(i.Key, finalList);
+                    }
+
+                    #endregion
+                    foreach (var i in Emails)
+                    {
+                        foreach (var j in DynamicList)
+                        {
+                            if (i.Key.ToLower() == j.Key.ToLower())
+                                SendMail_1(i.Value, j.Key, j.Value.ToList());
+                        }
+                    }
+                    DynamicList = new Dictionary<string, List<List<string>>>();
+                }
+                catch (Exception ex)
+                {
+                    #region Exception
+                    LogWrite("APIInitiator_4 Exception Message: " + ex.Message);
+                    LogWrite("APIInitiator_4 Exception StackTrace: " + ex.StackTrace);
+                    List<string> list = new List<string>();
+                    list.Add("Message:  " + ex.Message.ToString());
+                    list.Add("StackTrace:  " + ex.StackTrace.ToString());
+                    list.Add("InnerException.Message:  " + ex.InnerException.Message.ToString());
+                    list.Add("InnerException.StackTrace:  " + ex.InnerException.StackTrace.ToString());
+                    SendMail(list.ToArray(), "Exception", null);
+                    #endregion
+                }
+            }
+        }
+
+        public static bool SendMail_1(string emailTo = "", string emailType = "", List<List<string>> listString = null)
+        {
+            bool isSendSuccess = false;
+            string fromaddr = Convert.ToString(ConfigurationManager.AppSettings["EmailFrom"]);
+            string password = Convert.ToString(ConfigurationManager.AppSettings["EmailPassword"]);
+            MailMessage msg = new MailMessage();
+            msg.From = new MailAddress(fromaddr);
+            msg.Subject = "New vaccine alert at: " + DateTime.Now.ToString();
+            msg.Body = emailStringBuilder(null, listString);
+            foreach (var address in emailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                LogWrite("******************* Email sent to: " + address);
+                msg.Bcc.Add(address);
+            }
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com";
+            smtp.Port = 587;
+            smtp.UseDefaultCredentials = false;
+            smtp.EnableSsl = true;
+            NetworkCredential nc = new NetworkCredential(fromaddr, password);
+            smtp.Credentials = nc;
+            if (msg.Bcc.Count > 0)
+                smtp.Send(msg);
+            isSendSuccess = true;
+            SystemSounds.Beep.Play();
+            return isSendSuccess;
         }
 
         /// <summary>
