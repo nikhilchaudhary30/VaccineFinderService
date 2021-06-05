@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Topshelf;
 
 namespace VaccineFinderService
@@ -11,7 +7,6 @@ namespace VaccineFinderService
     {
         static void Main(string[] args)
         {
-            //ServiceMethods.APIInitiator_3(); -//-- For testing purpose uncomment this line of code.
             var exitCode = HostFactory.Run(x =>
             {
                 x.Service<ServiceMethods>(s =>

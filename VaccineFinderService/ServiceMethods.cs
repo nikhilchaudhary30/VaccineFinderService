@@ -17,7 +17,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
-using System.Reflection;
 using System.Text;
 using System.Timers;
 
@@ -297,13 +296,25 @@ namespace VaccineFinderService
                     List<List<string>> finalList = new List<List<string>>();
                     List<List<string>> ritvikFinalList = new List<List<string>>();
                     List<List<string>> agraFinalList = new List<List<string>>();
-                    List<List<string>> delhiFinalList = new List<List<string>>();
                     List<List<string>> karnalFinalList = new List<List<string>>();
                     List<List<string>> faridabadFinalList = new List<List<string>>();
                     List<List<string>> sonipatFinalList = new List<List<string>>();
                     List<List<string>> hyderabadFinalList = new List<List<string>>();
                     List<List<string>> puneFinalList = new List<List<string>>();
                     List<List<string>> mumbaiFinalList = new List<List<string>>();
+
+                    List<List<string>> delhi140FinalList = new List<List<string>>();
+                    List<List<string>> delhi141FinalList = new List<List<string>>();
+                    List<List<string>> delhi142FinalList = new List<List<string>>();
+                    List<List<string>> delhi143FinalList = new List<List<string>>();
+                    List<List<string>> delhi144FinalList = new List<List<string>>();
+                    List<List<string>> delhi145FinalList = new List<List<string>>();
+                    List<List<string>> delhi146FinalList = new List<List<string>>();
+                    List<List<string>> delhi147FinalList = new List<List<string>>();
+                    List<List<string>> delhi148FinalList = new List<List<string>>();
+                    List<List<string>> delhi149FinalList = new List<List<string>>();
+                    List<List<string>> delhi150FinalList = new List<List<string>>();
+
                     #endregion
 
                     #region Data Filtering 
@@ -426,8 +437,8 @@ namespace VaccineFinderService
                             }
                             #endregion
 
-                            #region Delhi
-                            if (center.district_name.ToLower() == "delhi")
+                            #region 140: New Delhi | 141: Central Delhi | 142: West Delhi | 143: North West Delhi | 144: South East Delhi | 145: East Delhi | 146: North Delhi | 147: North East Delhi | 148: Shahdara | 149: South Delhi | 150: South West Delhi
+                            if (center.district_name.ToLower() == "new delhi")
                             {
                                 foreach (var sess in center.sessions)
                                 {
@@ -441,7 +452,197 @@ namespace VaccineFinderService
                                         list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
                                         list.Add("Available Capacity: " + sess.available_capacity.ToString());
                                         list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
-                                        delhiFinalList.Add(list);
+                                        delhi140FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "central delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi141FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "west delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi142FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "north west delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi143FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "south east delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi144FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "east delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi145FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "north delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi146FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "north east delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi147FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "shahdara")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi148FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "south delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi149FinalList.Add(list);
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "south west delhi")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        delhi150FinalList.Add(list);
                                     }
                                 }
                             }
@@ -536,10 +737,6 @@ namespace VaccineFinderService
                     {
                         sent = SendMail(null, "Sonipat", sonipatFinalList.ToList());
                     }
-                    if (delhiFinalList.Count > 0)
-                    {
-                        sent = SendMail(null, "Delhi", delhiFinalList.ToList());
-                    }
                     if (hyderabadFinalList.Count > 0)
                     {
                         sent = SendMail(null, "Hyderabad", hyderabadFinalList.ToList());
@@ -551,6 +748,51 @@ namespace VaccineFinderService
                     if (mumbaiFinalList.Count > 0)
                     {
                         sent = SendMail(null, "Mumbai", mumbaiFinalList.ToList());
+                    }
+
+                    if (delhi140FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "New Delhi", delhi140FinalList.ToList());
+                    }
+                    if (delhi141FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "Central Delhi", delhi141FinalList.ToList());
+                    }
+                    if (delhi142FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "West Delhi", delhi142FinalList.ToList());
+                    }
+                    if (delhi143FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "North West Delhi", delhi143FinalList.ToList());
+                    }
+                    if (delhi144FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "South East Delhi", delhi144FinalList.ToList());
+                    }
+                    if (delhi145FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "East Delhi", delhi145FinalList.ToList());
+                    }
+                    if (delhi146FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "North Delhi", delhi146FinalList.ToList());
+                    }
+                    if (delhi147FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "North East Delhi", delhi147FinalList.ToList());
+                    }
+                    if (delhi148FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "Shahdara", delhi148FinalList.ToList());
+                    }
+                    if (delhi149FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "South Delhi", delhi149FinalList.ToList());
+                    }
+                    if (delhi150FinalList.Count > 0)
+                    {
+                        sent = SendMail(null, "South West Delhi", delhi150FinalList.ToList());
                     }
                     #endregion
                 }
@@ -744,13 +986,25 @@ namespace VaccineFinderService
                 string _SystemEmailTo = Convert.ToString(ConfigurationManager.AppSettings["SystemEmailTo"]);
                 string _RitvikEmailTo = Convert.ToString(ConfigurationManager.AppSettings["RitvikEmailTo"]);
                 string _AgraEmailTo = Convert.ToString(ConfigurationManager.AppSettings["AgraEmailTo"]);
-                string _DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["DelhiEmailTo"]);
                 string _KarnalEmailTo = Convert.ToString(ConfigurationManager.AppSettings["KarnalEmailTo"]);
                 string _FaridabadEmailTo = Convert.ToString(ConfigurationManager.AppSettings["FaridabadEmailTo"]);
                 string _SonipatEmailTo = Convert.ToString(ConfigurationManager.AppSettings["SonipatEmailTo"]);
                 string _HyderabadEmailTo = Convert.ToString(ConfigurationManager.AppSettings["HyderabadEmailTo"]);
                 string _PuneEmailTo = Convert.ToString(ConfigurationManager.AppSettings["PuneEmailTo"]);
                 string _MumbaiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["MumbaiEmailTo"]);
+
+                string _140DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["140DelhiEmailTo"]);
+                string _141DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["141DelhiEmailTo"]);
+                string _142DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["142DelhiEmailTo"]);
+                string _143DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["143DelhiEmailTo"]);
+                string _144DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["144DelhiEmailTo"]);
+                string _145DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["145DelhiEmailTo"]);
+                string _146DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["146DelhiEmailTo"]);
+                string _147DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["147DelhiEmailTo"]);
+                string _148DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["148DelhiEmailTo"]);
+                string _149DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["149DelhiEmailTo"]);
+                string _150DelhiEmailTo = Convert.ToString(ConfigurationManager.AppSettings["150DelhiEmailTo"]);
+
                 #endregion
                 MailMessage msg = new MailMessage();
                 msg.From = new MailAddress(fromaddr);
@@ -788,11 +1042,121 @@ namespace VaccineFinderService
                     }
                     emailType = string.Empty;
                 }
-                else if (emailType == "Delhi")
+                else if (emailType == "New Delhi")
                 {
                     msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
                     msg.Body = emailStringBuilder(null, listString);
-                    foreach (var address in _DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    foreach (var address in _140DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "Central Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _141DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "West Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _142DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "North West Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _143DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "South East Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _144DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "East Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _145DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "North Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _146DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "North East Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _147DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "Shahdara")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _148DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "South Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _149DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        LogWrite("******************* Email sent to: " + address);
+                        msg.Bcc.Add(address);
+                    }
+                    emailType = string.Empty;
+                }
+                else if (emailType == "South West Delhi")
+                {
+                    msg.Subject = "New Vaccine alert at: " + System.DateTime.Now.ToString();
+                    msg.Body = emailStringBuilder(null, listString);
+                    foreach (var address in _150DelhiEmailTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         LogWrite("******************* Email sent to: " + address);
                         msg.Bcc.Add(address);
@@ -988,8 +1352,8 @@ namespace VaccineFinderService
                 }
                 errMsg.AppendLine();
                 errMsg.AppendLine();
-                //errMsg.AppendLine("Hurry book your slot at: https://selfregistration.cowin.gov.in/");
             }
+            errMsg.AppendLine("Hurry book your slot at: https://selfregistration.cowin.gov.in/");
             errMsg.AppendLine("Regards,");
             errMsg.AppendLine("Service Bot");
             return errMsg.ToString();
@@ -1046,6 +1410,6 @@ namespace VaccineFinderService
             {
             }
         }
-        #endregion
+        #endregion       
     }
 }
