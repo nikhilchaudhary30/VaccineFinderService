@@ -13,9 +13,9 @@ namespace TelegramBOT
             {
                 x.Service<ServiceMethods>(s =>
                 {
-                    s.ConstructUsing(vaccine => new ServiceMethods());
-                    s.WhenStarted(vaccine => vaccine.Start());
-                    s.WhenStopped(vaccine => vaccine.Stop());
+                    s.ConstructUsing(service => new ServiceMethods());
+                    s.WhenStarted(service => service.Start());
+                    s.WhenStopped(service => service.Stop());
                 });
 
                 x.RunAsLocalSystem();

@@ -6,20 +6,17 @@
 // </self-generated>
 //------------------------------------------------------------------------------
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
-using System.Linq;
-using System.Media;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
-using System.Timers;
 using Telegram.Bot;
 
 namespace TelegramBOT
@@ -35,17 +32,6 @@ namespace TelegramBOT
 
         public ServiceMethods()
         {
-            TelegramBotInitiator();
-        }
-
-        /// <summary>
-        /// Timmer Function
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TimerElapsed(object sender, ElapsedEventArgs e)
-        {
-            TelegramBotInitiator();
         }
 
         public void Start()
@@ -55,6 +41,7 @@ namespace TelegramBOT
 
         public void Stop()
         {
+
         }
 
         #endregion
@@ -264,12 +251,6 @@ namespace TelegramBOT
             telegramBotClient.StartReceiving();
             telegramBotClient.OnMessage += TelegramBotClient_OnMessage;
             telegramBotClient.OnMessageEdited += TelegramBotClient_OnMessage;
-            telegramBotClient.OnInlineQuery += TelegramBotClient_OnInlineQuery;
-        }
-
-        private static void TelegramBotClient_OnInlineQuery(object sender, Telegram.Bot.Args.InlineQueryEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private async static void TelegramBotClient_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
@@ -437,8 +418,7 @@ namespace TelegramBOT
             }
             else if (e.Message.Text.ToLower() == "hi" || e.Message.Text.ToLower() == "hello" || e.Message.Text.ToLower() == "hey" || e.Message.Text.ToLower() == "hola" || e.Message.Text.ToLower() == "whatsup" || e.Message.Text.ToLower() == "wassup" || e.Message.Text.ToLower() == "ssup")
             {
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, e.Message.Text.ToLower() + " " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName);
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "you can type 'Help' for Commands!");
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, e.Message.Text.ToLower() + " " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + "  you can type 'Help' for Commands!");
             }
             else if (e.Message.Text.ToLower().Contains("/start"))
             {
@@ -491,27 +471,46 @@ namespace TelegramBOT
                 list.Add("Los Angeles: " + TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local, Los_Angeles).ToString("dd-MMMM-yyyy  hh:mm tt"));
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
             }
-            else if (e.Message.Text.ToLower().Contains("weather") || e.Message.Text.ToLower().Contains("w"))
+            else if (e.Message.Text.ToLower().Contains("weather") || e.Message.Text.ToLower() == "w")
             {
                 var txt = e.Message.Text.Split(" ");
                 if (txt.Length > 1)
                 {
-                    TelegramBotWeatherAPIInitiator(e.Message.Chat.Id, txt[1], e);
+                    if (txt.Length > 2)
+                    {
+                        TelegramBotWeatherAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
+                    }
+                    else
+                    {
+                        TelegramBotWeatherAPIInitiator(e.Message.Chat.Id, txt[1], e);
+                    }
                 }
                 else
                 {
                     await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please use keywords like: 'Weather Chandigarh' or 'W Chandigarh'");
                 }
             }
-            else if (e.Message.Text.ToLower().Contains("covid") || e.Message.Text.ToLower().Contains("c"))
+            else if (e.Message.Text.ToLower().Contains("covid") || e.Message.Text.ToLower() == "c")
             {
                 var txt = e.Message.Text.Split(" ");
                 if (txt.Length > 1)
                 {
                     if (txt[1].ToLower() == "all")
+                    {
                         TelegramBotCovidInfoAPIInitiator(e.Message.Chat.Id, "", e, "All");
+                    }
                     else
-                        TelegramBotCovidInfoAPIInitiator(e.Message.Chat.Id, txt[1], e, "State");
+                    {
+                        if (txt.Length > 2)
+                        {
+                            //var array = e.Message.Text.Split(' ', 2);
+                            TelegramBotCovidInfoAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e, "State");
+                        }
+                        else
+                        {
+                            TelegramBotCovidInfoAPIInitiator(e.Message.Chat.Id, txt[1], e, "State");
+                        }
+                    }
                 }
                 else
                 {
@@ -1248,7 +1247,7 @@ namespace TelegramBOT
             {
                 #region Exception
                 List<string> list = new List<string>();
-                list.Add("Class name: ServiceMethods, Method name: TelegramBotGameAPIInitiator");
+                list.Add("Class name: ServiceMethods, Method name: TelegramBotWeatherAPIInitiator");
                 list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
                 list.Add("Message:  " + ex?.Message?.ToString());
                 list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
@@ -1263,7 +1262,158 @@ namespace TelegramBOT
         {
             try
             {
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please wait while we're processing your request...");                
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please wait while we're processing your request...");
+                var client = new HttpClient();
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://corona-virus-world-and-india-data.p.rapidapi.com/api_india"),
+                    Headers = {
+                                { "x-rapidapi-key", Convert.ToString(ConfigurationManager.AppSettings["CoronaAPIToken"])},
+                                { "x-rapidapi-host", "corona-virus-world-and-india-data.p.rapidapi.com" },
+                            },
+                };
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var readTask = await response.Content.ReadAsStringAsync();
+                    //var result = JsonConvert.DeserializeObject<CovidInfoModel>(readTask);
+                    dynamic jsonData = JsonConvert.DeserializeObject<ExpandoObject>(readTask, new ExpandoObjectConverter());
+                    Dictionary<string, object> keyValuePairs = new Dictionary<string, object>();
+                    Dictionary<string, object> finalValuePairs = new Dictionary<string, object>();
+                    foreach (dynamic i in jsonData.total_values)
+                    {
+                        keyValuePairs.Add(i.Key, i.Value);
+                        finalValuePairs.Add(i.Key.ToLower(), i.Value);
+                    }
+                    foreach (dynamic i in jsonData.state_wise)
+                    {
+                        keyValuePairs.Add(i.Key, i.Value);
+                        finalValuePairs.Add(i.Key.ToLower(), i.Value);
+                    }
+                    foreach (var i in keyValuePairs)
+                    {
+                        if (keyValuePairs.ContainsKey(i.Key))
+                        {
+                            var gType = keyValuePairs[i.Key].GetType();
+                            dynamic value = keyValuePairs[i.Key];
+                            if (gType.Name != "String")
+                            {
+                                foreach (dynamic j in value.district)
+                                {
+                                    if (!finalValuePairs.ContainsKey(j.Key.ToLower()))
+                                    {
+                                        finalValuePairs.Add(j.Key.ToLower(), j.Value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    try
+                    {
+                        List<string> list = new List<string>();
+                        if (type == "All")
+                        {
+                            list.Add("Covid data at: " + finalValuePairs["lastupdatedtime"]);
+                            list.Add("Active: " + finalValuePairs["active"]);
+                            list.Add("Confirmed: " + finalValuePairs["confirmed"]);
+                            list.Add("Deaths: " + finalValuePairs["deaths"]);
+                            list.Add("Recovered: " + finalValuePairs["recovered"]);
+                            await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                        }
+                        else if (type == "State")
+                        {
+                            if (finalValuePairs.ContainsKey(region.ToLower()))
+                            {
+                                dynamic result = finalValuePairs[region];
+                                bool isState = ((IDictionary<String, object>)result).ContainsKey("state");
+                                if (isState)
+                                {
+                                    list.Add("Covid data for " + result.state + " on: " + result.lastupdatedtime);
+                                    list.Add("");
+                                    list.Add("Active: " + result.active);
+                                    list.Add("Confirmed: " + result.deltaconfirmed);
+                                    list.Add("Deaths: " + result.deltadeaths);
+                                    list.Add("Recovered: " + result.deltarecovered);
+                                    list.Add("");
+                                    list.Add("Total Confirmed: " + result.confirmed);
+                                    list.Add("Total Deaths: " + result.deaths);
+                                    list.Add("Total Recovered: " + result.recovered);
+                                    if (!string.IsNullOrWhiteSpace(result.statenotes))
+                                    {
+                                        list.Add("");
+                                        list.Add("State Notes: " + result.statenotes);
+                                    }
+                                }
+                                else
+                                {
+                                    list.Add("Covid data for " + region.ToUpper());
+                                    list.Add("");
+                                    list.Add("Active: " + result.active);
+                                    list.Add("Confirmed: " + result.delta.confirmed);
+                                    list.Add("Deaths: " + result.delta.deceased);
+                                    list.Add("Recovered: " + result.delta.recovered);
+                                    list.Add("");
+                                    list.Add("Total Confirmed: " + result.confirmed);
+                                    list.Add("Total Deaths: " + result.deceased);
+                                    list.Add("Total Recovered: " + result.recovered);
+                                    if (!string.IsNullOrWhiteSpace(result.notes))
+                                    {
+                                        list.Add("");
+                                        list.Add("State Notes: " + result.notes);
+                                    }
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else
+                            {
+                                await telegramBotClient.SendTextMessageAsync(ID, "No data available. Please check your keywords or try again later!");
+                                LogWrite("Please add support for: " + region);
+                            }
+                        }
+                        else
+                        {
+                            await telegramBotClient.SendTextMessageAsync(ID, "No data available. Please try again later!");
+                            LogWrite("Please add support for: " + region);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        #region Exception
+                        List<string> list = new List<string>();
+                        list.Add("Class name: ServiceMethods, Method name: TelegramBotCovidInfoAPIInitiator - Data Mapping issue");
+                        list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
+                        list.Add("Message:  " + ex?.Message?.ToString());
+                        list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
+                        list.Add("InnerException.Message:  " + Convert.ToString(ex?.InnerException?.Message));
+                        list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
+                        await telegramBotClient.SendTextMessageAsync(1531679242, exceptionStringBuilder(list.ToArray()));
+                        await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Techincal glitch spotted. Please try later!");
+                        #endregion
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                #region Exception
+                List<string> list = new List<string>();
+                list.Add("Class name: ServiceMethods, Method name: TelegramBotCovidInfoAPIInitiator");
+                list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
+                list.Add("Message:  " + ex?.Message?.ToString());
+                list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
+                list.Add("InnerException.Message:  " + Convert.ToString(ex?.InnerException?.Message));
+                list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
+                await telegramBotClient.SendTextMessageAsync(1531679242, exceptionStringBuilder(list.ToArray()));
+                #endregion
+            }
+        }
+
+        public async static void TelegramBotSearchAPIInitiator(long ID, string region, Telegram.Bot.Args.MessageEventArgs e = null, string type = "")
+        {
+            try
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please wait while we're processing your request...");
                 var client = new HttpClient();
                 var request = new HttpRequestMessage
                 {
@@ -1306,7 +1456,7 @@ namespace TelegramBOT
                                 list.Add("Total Confirmed: " + result.state_wise.Chandigarh.confirmed);
                                 list.Add("Total Deaths: " + result.state_wise.Chandigarh.deaths);
                                 list.Add("Total Recovered: " + result.state_wise.Chandigarh.recovered);
-                                if(!string.IsNullOrWhiteSpace(result.state_wise.Chandigarh.statenotes))
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.Chandigarh.statenotes))
                                 {
                                     list.Add("");
                                     list.Add("State Notes: " + result.state_wise.Chandigarh.statenotes);
