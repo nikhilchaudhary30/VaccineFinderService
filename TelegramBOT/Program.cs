@@ -22,7 +22,7 @@ namespace TelegramBOT
 
                 x.SetServiceName("TelegramBotService");
                 x.SetDisplayName("Telegram Bot Service");
-                x.SetDescription("This is the TelegramBot Vaccine Notification Service.");
+                x.SetDescription("This is the Telegram Bot Notification Service.");
             });
 
             int exitCodeValue = (int)Convert.ChangeType(exitCode, exitCode.GetTypeCode());

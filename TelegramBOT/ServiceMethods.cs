@@ -1208,7 +1208,7 @@ namespace TelegramBOT
                             list.Add("Recovered: " + result.total_values.recovered);
                             await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
                         }
-                        if (type == "State")
+                        else if (type == "State")
                         {
                             List<string> list = new List<string>();
                             list.Add("Covid data at: " + result.total_values.lastupdatedtime);
@@ -1217,6 +1217,11 @@ namespace TelegramBOT
                             list.Add("Deaths: " + result.total_values.deaths);
                             list.Add("Recovered: " + result.total_values.recovered);
                             await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                        }
+                        else
+                        {
+                            await telegramBotClient.SendTextMessageAsync(ID, "No data available. Please try again later!");
+                            LogWrite("Please add support for: " + region);
                         }
                     }
                 }
