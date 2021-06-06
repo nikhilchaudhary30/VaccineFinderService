@@ -265,7 +265,6 @@ namespace TelegramBOT
             telegramBotClient.OnMessage += TelegramBotClient_OnMessage;
             telegramBotClient.OnMessageEdited += TelegramBotClient_OnMessage;
             telegramBotClient.OnInlineQuery += TelegramBotClient_OnInlineQuery;
-            Console.ReadLine();
         }
 
         private static void TelegramBotClient_OnInlineQuery(object sender, Telegram.Bot.Args.InlineQueryEventArgs e)
@@ -280,7 +279,23 @@ namespace TelegramBOT
             {
                 Helpercommands(sender, e);
             }
-            if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Photo)
+            else if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Photo)
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "This phase is under development...");
+            }
+            else if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Audio)
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "This phase is under development...");
+            }
+            else if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Video)
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "This phase is under development...");
+            }
+            else if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Poll)
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "This phase is under development...");
+            }
+            else if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Sticker)
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "This phase is under development...");
             }
@@ -290,7 +305,7 @@ namespace TelegramBOT
         {
             e.Message.Text.Trim();
             LogWrite("\r\n\n\n\n****************** Log Started ******************");
-            LogWrite("Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text + ",");
+            LogWrite("Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", ChatID: " + e.Message.Chat.Id + ", Message: " + e.Message.Text + ",");
             if (e.Message.Text.ToLower().Contains("help"))
             {
                 List<string> help = new List<string>();
@@ -315,6 +330,8 @@ namespace TelegramBOT
                 help.Add("      > Shahdara");
                 help.Add("      > South Delhi");
                 help.Add("      > South West Delhi");
+                help.Add("      > Jaipur I");
+                help.Add("      > Jaipur II");
                 help.Add(" ");
                 help.Add("2. For system notifications please type 'Info'.");
                 help.Add(" ");
@@ -410,6 +427,14 @@ namespace TelegramBOT
             {
                 TelegramBotAPIInitiator(e.Message.Chat.Id, "150", e);
             }
+            else if (e.Message.Text.ToLower() == "jaipur i")
+            {
+                TelegramBotAPIInitiator(e.Message.Chat.Id, "505", e);
+            }
+            else if (e.Message.Text.ToLower() == "jaipur ii")
+            {
+                TelegramBotAPIInitiator(e.Message.Chat.Id, "506", e);
+            }
             else if (e.Message.Text.ToLower() == "hi" || e.Message.Text.ToLower() == "hello" || e.Message.Text.ToLower() == "hey" || e.Message.Text.ToLower() == "hola" || e.Message.Text.ToLower() == "whatsup" || e.Message.Text.ToLower() == "wassup" || e.Message.Text.ToLower() == "ssup")
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, e.Message.Text.ToLower() + " " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName);
@@ -417,12 +442,22 @@ namespace TelegramBOT
             }
             else if (e.Message.Text.ToLower().Contains("/start"))
             {
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Welcome " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", to Notification Service");
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please type 'Help' for Commands!");
+                List<string> list = new List<string>();
+                int hour = DateTime.Now.Hour;
+                var greeting = (hour < 12 ? "Good morning" : hour < 16 ? "Good afternoon" : "Good evening");
+                list.Add(greeting + " " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName);
+                list.Add("");
+                list.Add("Welcome to notification service");
+                list.Add("Please type 'Help' for commands!");
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
             }
             else if (e.Message.Text.ToLower().Contains("info"))
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(Utility().ToArray()));
+            }
+            else if (e.Message.Text.ToLower().Contains("nikhil"))
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Ohh Nikhil, hmm is my creator. You should Thank him :)");
             }
             else if (e.Message.Text.ToLower() == "game")
             {
@@ -489,8 +524,7 @@ namespace TelegramBOT
             }
             else
             {
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Hey " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName);
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please type 'Help' for Commands!");
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Hey " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + " looks like this command is not available currently. You can type 'Help' for commands!");
             }
         }
 
@@ -582,6 +616,9 @@ namespace TelegramBOT
                     List<List<string>> delhi149FinalList = new List<List<string>>();
                     List<List<string>> delhi150FinalList = new List<List<string>>();
 
+                    List<List<string>> jaipuriFinalList = new List<List<string>>();
+                    List<List<string>> jaipuriiFinalList = new List<List<string>>();
+
                     #endregion
 
                     #region Data Filtering 
@@ -618,6 +655,52 @@ namespace TelegramBOT
                                             await telegramBotClient.SendTextMessageAsync(ID, res);
                                         }
                                         //Thread.Sleep(2000);
+                                        LogWrite("******************* Alert sent to: Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username);
+                                        isTelegramSent = true;
+                                    }
+                                }
+                            }
+                            #endregion
+
+                            #region Jaipur
+                            if (center.district_name.ToLower() == "jaipur i")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        agraFinalList.Add(list);
+                                        await telegramBotClient.SendTextMessageAsync(ID, emailStringBuilder(null, jaipuriFinalList));
+                                        LogWrite("******************* Alert sent to: Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username);
+                                        isTelegramSent = true;
+                                    }
+                                }
+                            }
+
+                            if (center.district_name.ToLower() == "jaipur ii")
+                            {
+                                foreach (var sess in center.sessions)
+                                {
+                                    if (sess.min_age_limit == 18 && sess.available_capacity_dose1 > 5)
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add("Please find below details for " + center.district_name + " for Date: " + sess.date);
+                                        list.Add("Vaccine: " + sess.vaccine);
+                                        list.Add("Center Name: " + center.name);
+                                        list.Add("Center Address: " + center.address + ", Pincode: " + center.pincode);
+                                        list.Add("Slots: " + String.Join(" | ", sess.slots.ToArray()));
+                                        list.Add("Available Capacity: " + sess.available_capacity.ToString());
+                                        list.Add("Available Capacity of Dose 1 for " + sess.min_age_limit + "+: " + Convert.ToString(sess.available_capacity_dose1));
+                                        agraFinalList.Add(list);
+                                        await telegramBotClient.SendTextMessageAsync(ID, emailStringBuilder(null, jaipuriiFinalList));
                                         LogWrite("******************* Alert sent to: Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username);
                                         isTelegramSent = true;
                                     }
@@ -1210,13 +1293,171 @@ namespace TelegramBOT
                         }
                         else if (type == "State")
                         {
-                            List<string> list = new List<string>();
-                            list.Add("Covid data at: " + result.total_values.lastupdatedtime);
-                            list.Add("Active: " + result.total_values.active);
-                            list.Add("Confirmed: " + result.total_values.confirmed);
-                            list.Add("Deaths: " + result.total_values.deaths);
-                            list.Add("Recovered: " + result.total_values.recovered);
-                            await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            if (result.state_wise.Chandigarh.state.ToLower() == region.ToLower())
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for " + result.state_wise.Chandigarh.state + " on: " + result.state_wise.Chandigarh.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.Chandigarh.active);
+                                list.Add("Confirmed: " + result.state_wise.Chandigarh.deltaconfirmed);
+                                list.Add("Deaths: " + result.state_wise.Chandigarh.deltadeaths);
+                                list.Add("Recovered: " + result.state_wise.Chandigarh.deltarecovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.Chandigarh.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.Chandigarh.deaths);
+                                list.Add("Total Recovered: " + result.state_wise.Chandigarh.recovered);
+                                if(!string.IsNullOrWhiteSpace(result.state_wise.Chandigarh.statenotes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.Chandigarh.statenotes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else if (region.ToLower() == "agra")
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for Agra on: " + result.state_wise.UttarPradesh.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.UttarPradesh.district.Agra.active);
+                                list.Add("Confirmed: " + result.state_wise.UttarPradesh.district.Agra.delta.confirmed);
+                                list.Add("Deaths: " + result.state_wise.UttarPradesh.district.Agra.delta.deceased);
+                                list.Add("Recovered: " + result.state_wise.UttarPradesh.district.Agra.delta.recovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.UttarPradesh.district.Agra.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.UttarPradesh.district.Agra.deceased);
+                                list.Add("Total Recovered: " + result.state_wise.UttarPradesh.district.Agra.recovered);
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.UttarPradesh.district.Agra.notes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.UttarPradesh.district.Agra.notes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else if (region.ToLower() == "azamgarh")
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for Azamgarh on: " + result.state_wise.UttarPradesh.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.UttarPradesh.district.Azamgarh.active);
+                                list.Add("Confirmed: " + result.state_wise.UttarPradesh.district.Azamgarh.delta.confirmed);
+                                list.Add("Deaths: " + result.state_wise.UttarPradesh.district.Azamgarh.delta.deceased);
+                                list.Add("Recovered: " + result.state_wise.UttarPradesh.district.Azamgarh.delta.recovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.UttarPradesh.district.Azamgarh.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.UttarPradesh.district.Azamgarh.deceased);
+                                list.Add("Total Recovered: " + result.state_wise.UttarPradesh.district.Azamgarh.recovered);
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.UttarPradesh.district.Azamgarh.notes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.UttarPradesh.district.Azamgarh.notes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else if (result.state_wise.Haryana.state.ToLower() == region.ToLower())
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for " + result.state_wise.Haryana.state + " on: " + result.state_wise.Haryana.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.Haryana.active);
+                                list.Add("Confirmed: " + result.state_wise.Haryana.deltaconfirmed);
+                                list.Add("Deaths: " + result.state_wise.Haryana.deltadeaths);
+                                list.Add("Recovered: " + result.state_wise.Haryana.deltarecovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.Haryana.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.Haryana.deaths);
+                                list.Add("Total Recovered: " + result.state_wise.Haryana.recovered);
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.Haryana.statenotes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.Haryana.statenotes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else if (result.state_wise.Maharashtra.state.ToLower() == region.ToLower())
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for " + result.state_wise.Maharashtra.state + " on: " + result.state_wise.Maharashtra.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.Maharashtra.active);
+                                list.Add("Confirmed: " + result.state_wise.Maharashtra.deltaconfirmed);
+                                list.Add("Deaths: " + result.state_wise.Maharashtra.deltadeaths);
+                                list.Add("Recovered: " + result.state_wise.Maharashtra.deltarecovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.Maharashtra.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.Maharashtra.deaths);
+                                list.Add("Total Recovered: " + result.state_wise.Maharashtra.recovered);
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.Maharashtra.statenotes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.Maharashtra.statenotes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else if (result.state_wise.ArunachalPradesh.state.ToLower() == region.ToLower())
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for " + result.state_wise.ArunachalPradesh.state + " on: " + result.state_wise.ArunachalPradesh.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.ArunachalPradesh.active);
+                                list.Add("Confirmed: " + result.state_wise.ArunachalPradesh.deltaconfirmed);
+                                list.Add("Deaths: " + result.state_wise.ArunachalPradesh.deltadeaths);
+                                list.Add("Recovered: " + result.state_wise.ArunachalPradesh.deltarecovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.ArunachalPradesh.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.ArunachalPradesh.deaths);
+                                list.Add("Total Recovered: " + result.state_wise.ArunachalPradesh.recovered);
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.ArunachalPradesh.statenotes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.ArunachalPradesh.statenotes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else if (result.state_wise.Uttarakhand.state.ToLower() == region.ToLower())
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for " + result.state_wise.Uttarakhand.state + " on: " + result.state_wise.Uttarakhand.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.Uttarakhand.active);
+                                list.Add("Confirmed: " + result.state_wise.Uttarakhand.deltaconfirmed);
+                                list.Add("Deaths: " + result.state_wise.Uttarakhand.deltadeaths);
+                                list.Add("Recovered: " + result.state_wise.Uttarakhand.deltarecovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.Uttarakhand.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.Uttarakhand.deaths);
+                                list.Add("Total Recovered: " + result.state_wise.Uttarakhand.recovered);
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.Uttarakhand.statenotes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.Uttarakhand.statenotes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else if (result.state_wise.JammuandKashmir.state.ToLower() == region.ToLower())
+                            {
+                                List<string> list = new List<string>();
+                                list.Add("Covid data for " + result.state_wise.JammuandKashmir.state + " on: " + result.state_wise.JammuandKashmir.lastupdatedtime);
+                                list.Add("");
+                                list.Add("Active: " + result.state_wise.JammuandKashmir.active);
+                                list.Add("Confirmed: " + result.state_wise.JammuandKashmir.deltaconfirmed);
+                                list.Add("Deaths: " + result.state_wise.JammuandKashmir.deltadeaths);
+                                list.Add("Recovered: " + result.state_wise.JammuandKashmir.deltarecovered);
+                                list.Add("");
+                                list.Add("Total Confirmed: " + result.state_wise.JammuandKashmir.confirmed);
+                                list.Add("Total Deaths: " + result.state_wise.JammuandKashmir.deaths);
+                                list.Add("Total Recovered: " + result.state_wise.JammuandKashmir.recovered);
+                                if (!string.IsNullOrWhiteSpace(result.state_wise.JammuandKashmir.statenotes))
+                                {
+                                    list.Add("");
+                                    list.Add("State Notes: " + result.state_wise.JammuandKashmir.statenotes);
+                                }
+                                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                            }
+                            else
+                            {
+                                await telegramBotClient.SendTextMessageAsync(ID, "No data available. Please try again later!");
+                                LogWrite("Please add support for: " + region);
+                            }
                         }
                         else
                         {
