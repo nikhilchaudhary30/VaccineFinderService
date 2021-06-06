@@ -321,11 +321,13 @@ namespace TelegramBOT
                 help.Add(" ");
                 help.Add("4. For date noifications please type 'Date'.");
                 help.Add(" ");
-                help.Add("5. For weather noifications please type 'Weather place_name' or 'W place_name', E.g: Weather Chandigarh or W Delhi");
+                help.Add("5. For weather noifications please type 'Weather place_name', E.g: Weather Chandigarh or Weather Delhi");
                 help.Add(" ");
-                help.Add("6. For corona report noifications please type below commands: ");
-                help.Add("      > For all over type: 'Corona All' or 'C All'");
-                help.Add("      > For state wise type: 'Corona State_Name' or 'C State_Name' like Corona Chandigarh");
+                help.Add("6. For covid report noifications please type below commands: ");
+                help.Add("      > For all over type: 'Covid All'");
+                help.Add("      > For state wise type: 'Covid State_Name' like Covid Chandigarh");
+                help.Add(" ");
+                help.Add("7. For searching please type 'Search Text', E.g: Search C#.NET");
 
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(help.ToArray()));
             }
@@ -419,7 +421,7 @@ namespace TelegramBOT
             }
             else if (e.Message.Text.ToLower() == "hi" || e.Message.Text.ToLower() == "hello" || e.Message.Text.ToLower() == "hey" || e.Message.Text.ToLower() == "hola" || e.Message.Text.ToLower() == "whatsup" || e.Message.Text.ToLower() == "wassup" || e.Message.Text.ToLower() == "ssup")
             {
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, e.Message.Text.ToLower() + " " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + "  you can type 'Help' for Commands!");
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, e.Message.Text.ToLower() + " " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + " you can type 'Help' for Commands!");
             }
             else if (e.Message.Text.ToLower().Contains("/start"))
             {
@@ -436,7 +438,7 @@ namespace TelegramBOT
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(Utility().ToArray()));
             }
-            else if (e.Message.Text.ToLower().Contains("nikhil"))
+            else if (e.Message.Text.ToLower() == "nikhil")
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Ohh Nikhil, hmm is my creator. You should Thank him :)");
             }
@@ -472,7 +474,7 @@ namespace TelegramBOT
                 list.Add("Los Angeles: " + TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local, Los_Angeles).ToString("dd-MMMM-yyyy  hh:mm tt"));
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
             }
-            else if (e.Message.Text.ToLower().Contains("weather") || e.Message.Text.ToLower() == "w")
+            else if (e.Message.Text.ToLower().Contains("weather"))
             {
                 var txt = e.Message.Text.Split(" ");
                 if (txt.Length > 1)
@@ -488,10 +490,10 @@ namespace TelegramBOT
                 }
                 else
                 {
-                    await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please use keywords like: 'Weather Chandigarh' or 'W Chandigarh'");
+                    await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please use keywords like: 'Weather Chandigarh'");
                 }
             }
-            else if (e.Message.Text.ToLower().Contains("covid") || e.Message.Text.ToLower() == "c")
+            else if (e.Message.Text.ToLower().Contains("covid"))
             {
                 var txt = e.Message.Text.Split(" ");
                 if (txt.Length > 1)
@@ -504,7 +506,6 @@ namespace TelegramBOT
                     {
                         if (txt.Length > 2)
                         {
-                            //var array = e.Message.Text.Split(' ', 2);
                             TelegramBotCovidInfoAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e, "State");
                         }
                         else
@@ -515,24 +516,20 @@ namespace TelegramBOT
                 }
                 else
                 {
-                    await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please use keywords like: 'Weather Chandigarh' or 'W Chandigarh'");
+                    await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please use keywords like: 'Weather Chandigarh'");
                 }
             }
             else if (e.Message.Text.ToLower() == "ranzo")
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Ranzo YT: " + "http://www.youtube.com/watch?v=kRUq3vQDPY4");
             }
-            else if (e.Message.Text.ToLower().Contains("search") || e.Message.Text.ToLower() == "s")
+            else if (e.Message.Text.ToLower().Contains("search"))
             {
                 var txt = e.Message.Text.Split(" ");
                 if (txt.Length > 1)
                 {
                     TelegramBotSearchAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
-                }
-                else
-                {
-                    await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please use keywords like: 'Weather Chandigarh' or 'W Chandigarh'");
-                }
+                }               
             }
             else
             {
@@ -1342,7 +1339,7 @@ namespace TelegramBOT
                         {
                             if (finalValuePairs.ContainsKey(region.ToLower()))
                             {
-                                dynamic result = finalValuePairs[region];
+                                dynamic result = finalValuePairs[region.ToLower()];
                                 bool isState = ((IDictionary<String, object>)result).ContainsKey("state");
                                 if (isState)
                                 {
