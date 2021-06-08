@@ -24,13 +24,13 @@ namespace TelegramBOT
         public string Kind { get; set; }
         public string Title { get; set; }
         public string HtmlTitle { get; set; }
-        public Uri Link { get; set; }
+        public string Link { get; set; }
         public string DisplayLink { get; set; }
         public string Snippet { get; set; }
         public string HtmlSnippet { get; set; }
         public string CacheId { get; set; }
-        public Uri FormattedUrl { get; set; }
-        public Uri HtmlFormattedUrl { get; set; }
+        public string FormattedUrl { get; set; }
+        public string HtmlFormattedUrl { get; set; }
         public Pagemap Pagemap { get; set; }
     }
 
@@ -44,12 +44,12 @@ namespace TelegramBOT
 
     public partial class CseImage
     {
-        public Uri Src { get; set; }
+        public string Src { get; set; }
     }
 
     public partial class CseThumbnail
     {
-        public Uri Src { get; set; }
+        public string Src { get; set; }
         public long? Width { get; set; }
         public long? Height { get; set; }
     }
@@ -57,7 +57,7 @@ namespace TelegramBOT
     public partial class Metatag
     {
         public string Referrer { get; set; }
-        public Uri OgImage { get; set; }
+        public string OgImage { get; set; }
         public long? OgImageWidth { get; set; }
         public string TwitterCard { get; set; }
         public string OgSiteName { get; set; }
@@ -73,11 +73,11 @@ namespace TelegramBOT
         public string Title { get; set; }
         public string TwitterCreator { get; set; }
         public string ArticleAuthor { get; set; }
-        public Uri TwitterImage { get; set; }
-        public Uri OgUrl { get; set; }
+        public string TwitterImage { get; set; }
+        public string OgUrl { get; set; }
         public string ThemeColor { get; set; }
         public DateTimeOffset? ArticlePublishedTime { get; set; }
-        public Uri TwitterUrl { get; set; }
+        public string TwitterUrl { get; set; }
         public string TwitterImageAlt { get; set; }
         public string TwitterSite { get; set; }
         public DateTimeOffset? ArticleModifiedTime { get; set; }
@@ -93,7 +93,7 @@ namespace TelegramBOT
 
     public partial class Place
     {
-        public Uri Image { get; set; }
+        public string Image { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }

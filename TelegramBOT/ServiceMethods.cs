@@ -26,10 +26,8 @@ namespace TelegramBOT
     {
         #region Service Helping Components
 
-        #region Service Variables
         private static Dictionary<int, string> URLs { get; set; }
         static TelegramBotClient telegramBotClient = new TelegramBotClient(Convert.ToString(ConfigurationManager.AppSettings["TelegramBotToken"]));
-        #endregion
 
         public ServiceMethods()
         {
@@ -47,7 +45,7 @@ namespace TelegramBOT
 
         #endregion
 
-        #region API and Email Components 
+        #region Helpers
 
         public static List<string> Utility()
         {
@@ -209,7 +207,12 @@ namespace TelegramBOT
             return errMsg.ToString();
         }
 
-        #endregion
+        public static IEnumerable<string> StringSplitter(string str, int chunkSize)
+        {
+            return Enumerable.Range(0, str.Length / chunkSize)
+                .Select(i => str.Substring(i * chunkSize, chunkSize));
+        }
+
 
         #endregion
 
@@ -245,7 +248,11 @@ namespace TelegramBOT
             {
             }
         }
-        #endregion       
+        #endregion
+
+        #endregion
+
+        #region Telegram BOT
 
         public static void TelegramBotInitiator()
         {
@@ -328,7 +335,10 @@ namespace TelegramBOT
                 help.Add("      > For state wise type: 'Covid State_Name' like Covid Chandigarh");
                 help.Add(" ");
                 help.Add("7. For searching please type 'Search Text', E.g: Search C#.NET");
-
+                help.Add(" ");
+                help.Add("8. For horoscope please type 'Horoscope SignName', E.g: Horoscope Leo");
+                help.Add(" ");
+                help.Add("9. For stocks please type 'Stock Stock_Symbol', E.g: Stock ITC");
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(help.ToArray()));
             }
             else if (e.Message.Text.ToLower() == "chandigarh")
@@ -529,13 +539,33 @@ namespace TelegramBOT
                 if (txt.Length > 1)
                 {
                     TelegramBotSearchAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
-                }               
+                }
+            }
+            else if (e.Message.Text.ToLower().Contains("horoscope"))
+            {
+                var txt = e.Message.Text.Split(" ");
+                if (txt.Length > 1)
+                {
+                    TelegramBotHoroscopeAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
+                }
+            }
+            else if (e.Message.Text.ToLower().Contains("stock"))
+            {
+                var txt = e.Message.Text.Split(" ");
+                if (txt.Length > 1)
+                {
+                    TelegramBotStockAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
+                }
             }
             else
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Hey " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + " looks like this command is not available currently. You can type 'Help' for commands!");
             }
         }
+
+        #endregion
+
+        #region Third Party APIs
 
         public async static void TelegramBotAPIInitiator(long ID, string _DistrictIDs, Telegram.Bot.Args.MessageEventArgs e = null)
         {
@@ -1461,7 +1491,7 @@ namespace TelegramBOT
                         foreach (var i in StringSplitter(res, 4096))
                         {
                             await telegramBotClient.SendTextMessageAsync(ID, i);
-                        }                       
+                        }
                     }
                     else
                     {
@@ -1484,10 +1514,165 @@ namespace TelegramBOT
             }
         }
 
-        public static IEnumerable<string> StringSplitter(string str, int chunkSize)
+        public async static void TelegramBotHoroscopeAPIInitiator(long ID, string sign, Telegram.Bot.Args.MessageEventArgs e = null)
         {
-            return Enumerable.Range(0, str.Length / chunkSize)
-                .Select(i => str.Substring(i * chunkSize, chunkSize));
+            try
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please wait while we're processing your request...");
+                var client = new HttpClient();
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://sameer-kumar-aztro-v1.p.rapidapi.com/?sign=" + sign + "&day=today"),
+                    Headers = {
+                                { "x-rapidapi-key", Convert.ToString(ConfigurationManager.AppSettings["HoroscopeAPIToken"])},
+                                { "x-rapidapi-host", "sameer-kumar-aztro-v1.p.rapidapi.com" },
+                            },
+                };
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var readTask = await response.Content.ReadAsStringAsync();
+                    //var result = JsonConvert.DeserializeObject<CovidInfoModel>(readTask);
+                    dynamic jsonData = JsonConvert.DeserializeObject<ExpandoObject>(readTask, new ExpandoObjectConverter());
+                    Dictionary<string, object> keyValuePairs = new Dictionary<string, object>();
+                    foreach (dynamic i in jsonData)
+                    {
+                        keyValuePairs.Add(i.Key, i.Value);
+                    }
+                    try
+                    {
+                        List<string> list = new List<string>();
+                        list.Add("Horoscope for: " + sign.ToUpper() + " for date: " + keyValuePairs["current_date"]);
+                        list.Add("");
+                        list.Add("Description: " + keyValuePairs["description"]);
+                        list.Add("");
+                        list.Add("Compatibility: " + keyValuePairs["compatibility"]);
+                        list.Add("Mood: " + keyValuePairs["mood"]);
+                        list.Add("Color: " + keyValuePairs["color"]);
+                        list.Add("Lucky Number: " + keyValuePairs["lucky_number"]);
+                        list.Add("Lucky Time: " + keyValuePairs["lucky_time"]);
+                        await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                    }
+                    catch (Exception ex)
+                    {
+                        #region Exception
+                        List<string> list = new List<string>();
+                        list.Add("Class name: ServiceMethods, Method name: TelegramBotHoroscopeAPIInitiator - Adding data to List");
+                        list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
+                        list.Add("Message:  " + ex?.Message?.ToString());
+                        list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
+                        list.Add("InnerException.Message:  " + Convert.ToString(ex?.InnerException?.Message));
+                        list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
+                        await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "No data found!");
+                        await telegramBotClient.SendTextMessageAsync(1715334607, exceptionStringBuilder(list.ToArray()));
+                        #endregion
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                #region Exception
+                List<string> list = new List<string>();
+                list.Add("Class name: ServiceMethods, Method name: TelegramBotHoroscopeAPIInitiator");
+                list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
+                list.Add("Message:  " + ex?.Message?.ToString());
+                list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
+                list.Add("InnerException.Message:  " + Convert.ToString(ex?.InnerException?.Message));
+                list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
+                await telegramBotClient.SendTextMessageAsync(1715334607, exceptionStringBuilder(list.ToArray()));
+                #endregion
+            }
         }
+
+        public async static void TelegramBotStockAPIInitiator(long ID, string stock, Telegram.Bot.Args.MessageEventArgs e = null)
+        {
+            try
+            {
+                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Please wait while we're processing your request...");
+                var client = new HttpClient();
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri("https://alpha-vantage.p.rapidapi.com/query?function=GLOBAL_QUOTE&symbol=" + stock),
+                    Headers = {
+                                { "x-rapidapi-key", Convert.ToString(ConfigurationManager.AppSettings["StockAPIToken"])},
+                                { "x-rapidapi-host", "alpha-vantage.p.rapidapi.com" },
+                            },
+                };
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    var readTask = await response.Content.ReadAsStringAsync();
+                    //var result = JsonConvert.DeserializeObject<CovidInfoModel>(readTask);
+                    dynamic jsonData = JsonConvert.DeserializeObject<ExpandoObject>(readTask, new ExpandoObjectConverter());
+                    Dictionary<string, object> keyValuePairs = new Dictionary<string, object>();
+                    Dictionary<string, object> finalValuePairs = new Dictionary<string, object>();
+                    foreach (dynamic i in jsonData)
+                    {
+                        keyValuePairs.Add(i.Key, i.Value);
+                    }
+                    foreach (var i in keyValuePairs)
+                    {
+                        if (keyValuePairs.ContainsKey(i.Key))
+                        {
+                            dynamic value = keyValuePairs[i.Key];
+                            foreach (dynamic j in value)
+                            {
+                                if (!finalValuePairs.ContainsKey(j.Key))
+                                {
+                                    finalValuePairs.Add(j.Key, j.Value);
+                                }
+                            }
+
+                        }
+                    }
+                    try
+                    {
+                        List<string> list = new List<string>();
+                        list.Add("Stock report for: " + finalValuePairs["01. symbol"] + " for date: " + DateTime.Now);
+                        list.Add("");
+                        list.Add("Open: " + finalValuePairs["02. open"]);
+                        list.Add("High: " + finalValuePairs["03. high"]);
+                        list.Add("Low: " + finalValuePairs["04. low"]);
+                        list.Add("Price: " + finalValuePairs["05. price"]);
+                        list.Add("Volume: " + finalValuePairs["06. volume"]);
+                        list.Add("Lastest trading day: " + finalValuePairs["07. latest trading day"]);
+                        list.Add("Previous Close: " + finalValuePairs["08. previous close"]);
+                        list.Add("Change: " + finalValuePairs["09. change"]);
+                        list.Add("Change %: " + finalValuePairs["10. change percent"]);
+                        await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(list.ToArray()));
+                    }
+                    catch (Exception ex)
+                    {
+                        List<string> list = new List<string>();
+                        list.Add("Class name: ServiceMethods, Method name: TelegramBotStockAPIInitiator - Adding result to List");
+                        list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
+                        list.Add("Message:  " + ex?.Message?.ToString());
+                        list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
+                        list.Add("InnerException.Message:  " + Convert.ToString(ex?.InnerException?.Message));
+                        list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
+                        await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "No data found!");
+                        await telegramBotClient.SendTextMessageAsync(1715334607, exceptionStringBuilder(list.ToArray()));
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                #region Exception
+                List<string> list = new List<string>();
+                list.Add("Class name: ServiceMethods, Method name: TelegramBotStockAPIInitiator");
+                list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
+                list.Add("Message:  " + ex?.Message?.ToString());
+                list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
+                list.Add("InnerException.Message:  " + Convert.ToString(ex?.InnerException?.Message));
+                list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
+                await telegramBotClient.SendTextMessageAsync(1715334607, exceptionStringBuilder(list.ToArray()));
+                #endregion
+            }
+        }
+
+        #endregion
     }
 }
