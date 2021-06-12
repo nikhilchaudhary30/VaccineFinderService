@@ -105,9 +105,9 @@ namespace TelegramBOT
 
     public partial class FmtPrice
     {
-        public long? OriginalPrice { get; set; }
-        public long? DiscountPrice { get; set; }
-        public long? IntermediatePrice { get; set; }
+        public string OriginalPrice { get; set; }
+        public string DiscountPrice { get; set; }
+        public string IntermediatePrice { get; set; }
     }
 
     public partial class Promotions

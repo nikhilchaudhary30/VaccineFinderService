@@ -5,6 +5,7 @@
 //    Manual changes to this file may cause unexpected behavior in your application.
 // </self-generated>
 //------------------------------------------------------------------------------
+using Google.Apis.Drive.v3;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -14,6 +15,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -278,7 +280,16 @@ namespace TelegramBOT
             }
             else if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Video)
             {
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "This phase is under development...");
+                Telegram.Bot.Types.Video video = new Telegram.Bot.Types.Video();
+                video.Duration = 3023;
+                video.FileId = "BAACAgIAAxkBAAIENmDAjdmg7Ajl6emygjiwLbBFPQs9AALfDgACu2oISqMlLabwP7UjHwQ";
+                video.FileSize = 571988296;
+                video.FileUniqueId = "AgAD3w4AArtqCEo";
+                video.Height = 1080;
+                video.MimeType = "video/x-matroska";
+                video.Width = 1920;
+
+                await telegramBotClient.SendVideoAsync(e.Message.Chat.Id, "This phase is under development...");
             }
             else if (e.Message.Type == Telegram.Bot.Types.Enums.MessageType.Poll)
             {
@@ -292,143 +303,146 @@ namespace TelegramBOT
 
         public async static void Helpercommands(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
+            SystemSounds.Beep.Play();
             e.Message.Text.Trim();
             LogWrite("\r\n\n\n\n****************** Log Started ******************");
             LogWrite("Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", ChatID: " + e.Message.Chat.Id + ", Message: " + e.Message.Text + ",");
             if (e.Message.Text.ToLower().Contains("help"))
             {
                 List<string> help = new List<string>();
-                help.Add("1. For vaccine notifications please type below commands: ");
-                help.Add("      > Chandigarh");
-                help.Add("      > Mohali");
-                help.Add("      > Karnal");
-                help.Add("      > Agra");
-                help.Add("      > Faridabad");
-                help.Add("      > Sonipat");
-                help.Add("      > Hyderabad");
-                help.Add("      > Mumbai");
-                help.Add("      > Pune");
-                help.Add("      > New Delhi");
-                help.Add("      > Central Delhi");
-                help.Add("      > West Delhi");
-                help.Add("      > North West Delhi");
-                help.Add("      > South East Delhi");
-                help.Add("      > East Delhi");
-                help.Add("      > North Delhi");
-                help.Add("      > North East Delhi");
-                help.Add("      > Shahdara");
-                help.Add("      > South Delhi");
-                help.Add("      > South West Delhi");
-                help.Add("      > Jaipur I");
-                help.Add("      > Jaipur II");
+                //help.Add("1. For vaccine notifications please type below commands: ");
+                //help.Add("      > Chandigarh");
+                //help.Add("      > Mohali");
+                //help.Add("      > Karnal");
+                //help.Add("      > Agra");
+                //help.Add("      > Faridabad");
+                //help.Add("      > Sonipat");
+                //help.Add("      > Hyderabad");
+                //help.Add("      > Mumbai");
+                //help.Add("      > Pune");
+                //help.Add("      > New Delhi");
+                //help.Add("      > Central Delhi");
+                //help.Add("      > West Delhi");
+                //help.Add("      > North West Delhi");
+                //help.Add("      > South East Delhi");
+                //help.Add("      > East Delhi");
+                //help.Add("      > North Delhi");
+                //help.Add("      > North East Delhi");
+                //help.Add("      > Shahdara");
+                //help.Add("      > South Delhi");
+                //help.Add("      > South West Delhi");
+                //help.Add("      > Jaipur I");
+                //help.Add("      > Jaipur II");
+                //help.Add(" ");
+                help.Add("1. For system notifications please type 'Info'.");
                 help.Add(" ");
-                help.Add("2. For system notifications please type 'Info'.");
+                help.Add("2. For free game noifications please type 'Game'.");
                 help.Add(" ");
-                help.Add("3. For free game noifications please type 'Game'.");
+                help.Add("3. For date noifications please type 'Date'.");
                 help.Add(" ");
-                help.Add("4. For date noifications please type 'Date'.");
+                help.Add("4. For weather noifications please type 'Weather place_name', E.g: Weather Chandigarh or Weather Delhi");
                 help.Add(" ");
-                help.Add("5. For weather noifications please type 'Weather place_name', E.g: Weather Chandigarh or Weather Delhi");
-                help.Add(" ");
-                help.Add("6. For covid report noifications please type below commands: ");
+                help.Add("5. For covid report noifications please type below commands: ");
                 help.Add("      > For all over type: 'Covid All'");
                 help.Add("      > For state wise type: 'Covid State_Name' like Covid Chandigarh");
                 help.Add(" ");
-                help.Add("7. For searching please type 'Search Text', E.g: Search C#.NET");
+                help.Add("6. For searching please type 'Search Text', E.g: Search C#.NET");
                 help.Add(" ");
-                help.Add("8. For horoscope please type 'Horoscope SignName', E.g: Horoscope Leo");
+                help.Add("7. For horoscope please type 'Horoscope SignName', E.g: Horoscope Leo");
                 help.Add(" ");
-                help.Add("9. For stocks please type 'Stock Stock_Symbol', E.g: Stock ITC");
+                help.Add("8. For stocks please type 'Stock Stock_Symbol', E.g: Stock ITC");
+                help.Add(" ");
+                help.Add("9. For gaming channel please type 'Ranzo'");
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(help.ToArray()));
             }
-            else if (e.Message.Text.ToLower() == "chandigarh")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "108", e);
-            }
-            else if (e.Message.Text.ToLower() == "mohali")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "496", e);
-            }
-            else if (e.Message.Text.ToLower() == "karnal")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "203", e);
-            }
-            else if (e.Message.Text.ToLower() == "agra")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "622", e);
-            }
-            else if (e.Message.Text.ToLower() == "faridabad")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "199", e);
-            }
-            else if (e.Message.Text.ToLower() == "sonipat")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "198", e);
-            }
-            else if (e.Message.Text.ToLower() == "hyderabad")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "581", e);
-            }
-            else if (e.Message.Text.ToLower() == "mumbai")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "395", e);
-            }
-            else if (e.Message.Text.ToLower() == "pune")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "363", e);
-            }
-            else if (e.Message.Text.ToLower() == "new delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "140", e);
-            }
-            else if (e.Message.Text.ToLower() == "central delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "141", e);
-            }
-            else if (e.Message.Text.ToLower() == "west delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "142", e);
-            }
-            else if (e.Message.Text.ToLower() == "north west delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "143", e);
-            }
-            else if (e.Message.Text.ToLower() == "south east delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "144", e);
-            }
-            else if (e.Message.Text.ToLower() == "east delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "145", e);
-            }
-            else if (e.Message.Text.ToLower() == "north delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "146", e);
-            }
-            else if (e.Message.Text.ToLower() == "north east delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "147", e);
-            }
-            else if (e.Message.Text.ToLower() == "shahdara")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "148", e);
-            }
-            else if (e.Message.Text.ToLower() == "south delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "149", e);
-            }
-            else if (e.Message.Text.ToLower() == "south west delhi")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "150", e);
-            }
-            else if (e.Message.Text.ToLower() == "jaipur i")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "505", e);
-            }
-            else if (e.Message.Text.ToLower() == "jaipur ii")
-            {
-                TelegramBotAPIInitiator(e.Message.Chat.Id, "506", e);
-            }
+            //else if (e.Message.Text.ToLower() == "chandigarh")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "108", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "mohali")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "496", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "karnal")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "203", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "agra")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "622", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "faridabad")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "199", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "sonipat")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "198", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "hyderabad")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "581", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "mumbai")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "395", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "pune")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "363", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "new delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "140", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "central delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "141", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "west delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "142", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "north west delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "143", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "south east delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "144", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "east delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "145", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "north delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "146", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "north east delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "147", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "shahdara")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "148", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "south delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "149", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "south west delhi")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "150", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "jaipur i")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "505", e);
+            //}
+            //else if (e.Message.Text.ToLower() == "jaipur ii")
+            //{
+            //    TelegramBotAPIInitiator(e.Message.Chat.Id, "506", e);
+            //}
             else if (e.Message.Text.ToLower() == "hi" || e.Message.Text.ToLower() == "hello" || e.Message.Text.ToLower() == "hey" || e.Message.Text.ToLower() == "hola" || e.Message.Text.ToLower() == "whatsup" || e.Message.Text.ToLower() == "wassup" || e.Message.Text.ToLower() == "ssup")
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, e.Message.Text.ToLower() + " " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + " you can type 'Help' for Commands!");
@@ -531,7 +545,27 @@ namespace TelegramBOT
             }
             else if (e.Message.Text.ToLower() == "ranzo")
             {
-                await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Ranzo YT: " + "http://www.youtube.com/watch?v=kRUq3vQDPY4");
+                List<string> list = new List<string>();
+                list.Add("Hey welcome to best gaming channel ever");
+                list.Add("Subscribe Ranzo YT: " + "https://www.youtube.com/c/RanzoYT");
+                list.Add("");
+                list.Add("Click on below links to watch amazing videos: ");
+                list.Add("https://www.youtube.com/watch?v=M5gjUT33EYc");
+                list.Add("");
+                list.Add("https://www.youtube.com/watch?v=kRUq3vQDPY4");
+                list.Add("");
+                list.Add("https://www.youtube.com/watch?v=JnbTzoxwe-M");
+                list.Add("");
+                list.Add("https://www.youtube.com/watch?v=qzposQ-Da5Y");
+                list.Add("");
+                list.Add("https://www.youtube.com/watch?v=PmwzxdAihxg");
+                list.Add("");
+                list.Add("A Valorant Montage: " + "https://www.youtube.com/watch?v=-hYjgI1oZxY");
+                list.Add("");
+                using (var stream = File.Open(Convert.ToString(ConfigurationManager.AppSettings["PhotoPath"]), FileMode.Open))
+                {
+                    var rep = await telegramBotClient.SendPhotoAsync(e.Message.Chat.Id, stream, StringBuilder(list.ToArray()));
+                }
             }
             else if (e.Message.Text.ToLower().Contains("search"))
             {
@@ -557,6 +591,10 @@ namespace TelegramBOT
                     TelegramBotStockAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
                 }
             }
+            else if (e.Message.Text.ToLower() == "send alert")
+            {
+                TelegramBotAlertSendInitiator(e);
+            }
             else
             {
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Hey " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + " looks like this command is not available currently. You can type 'Help' for commands!");
@@ -566,6 +604,56 @@ namespace TelegramBOT
         #endregion
 
         #region Third Party APIs
+
+        public async static void TelegramBotAlertSendInitiator(Telegram.Bot.Args.MessageEventArgs e = null)
+        {
+            StringBuilder sb;
+            try
+            {
+                string file = Convert.ToString(ConfigurationManager.AppSettings["SendAlertPath"]);
+                string _SendAlertTo = Convert.ToString(ConfigurationManager.AppSettings["SendAlertTo"]);
+                sb = new StringBuilder();
+
+                if (!string.IsNullOrWhiteSpace(file))
+                {
+                    using (FileStream fs = File.Open(file, FileMode.Open))
+                    {
+                        using (BufferedStream bs = new BufferedStream(fs))
+                        {
+                            using (StreamReader sr = new StreamReader(bs))
+                            {
+                                string str;
+                                while ((str = sr.ReadLine()) != null)
+                                {
+                                    sb.AppendLine(str);
+                                }
+                            }
+                        }
+                    }
+                    var finalString = sb.ToString();
+                    if (!string.IsNullOrWhiteSpace(finalString))
+                    {
+                        foreach (var to in _SendAlertTo.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            await telegramBotClient.SendTextMessageAsync(to, finalString, Telegram.Bot.Types.Enums.ParseMode.Default, true);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                #region Exception
+                List<string> list = new List<string>();
+                list.Add("Class name: ServiceMethods, Method name: TelegramBotAlertSendInitiator");
+                list.Add("Exception occurred for Name: " + e.Message.Chat.FirstName + " " + e.Message.Chat.LastName + ", Username: " + e.Message.Chat.Username + ", Message: " + e.Message.Text);
+                list.Add("Message:  " + ex?.Message?.ToString());
+                list.Add("StackTrace:  " + ex?.StackTrace?.ToString());
+                list.Add("InnerException.Message:  " + Convert.ToString(ex?.InnerException?.Message));
+                list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
+                await telegramBotClient.SendTextMessageAsync(1715334607, exceptionStringBuilder(list.ToArray()));
+                #endregion
+            }
+        }
 
         public async static void TelegramBotAPIInitiator(long ID, string _DistrictIDs, Telegram.Bot.Args.MessageEventArgs e = null)
         {
@@ -1670,6 +1758,22 @@ namespace TelegramBOT
                 list.Add("InnerException.StackTrace:  " + Convert.ToString(ex?.InnerException?.StackTrace));
                 await telegramBotClient.SendTextMessageAsync(1715334607, exceptionStringBuilder(list.ToArray()));
                 #endregion
+            }
+        }
+
+        public static void printFile(DriveService service, String fileId)
+        {
+            try
+            {
+                Google.Apis.Drive.v3.Data.File file = service.Files.Get(fileId).Execute();
+
+                Console.WriteLine("Title: " + file.Name);
+                Console.WriteLine("Description: " + file.Description);
+                Console.WriteLine("MIME type: " + file.MimeType);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred: " + e.Message);
             }
         }
 
