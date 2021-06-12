@@ -8,6 +8,7 @@
 using Google.Apis.Drive.v3;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -62,7 +63,6 @@ namespace TelegramBOT
             //list.Add("Power Line Status: " + pwr.PowerLineStatus.ToString());
             #endregion
 
-
             #region Internet Info
             System.Net.WebClient wc = new System.Net.WebClient();
             DateTime dt1 = DateTime.Now;
@@ -71,6 +71,7 @@ namespace TelegramBOT
             list.Add("Internet Status: " + Math.Round((data.Length / 1024) / (dt2 - dt1).TotalSeconds, 2) + " Kb/Sec");
             list.Add("Host Name: " + Dns.GetHostName().ToString());
             #endregion
+
             #region Memory Info
             PerformanceCounter cpuCounter;
             PerformanceCounter ramCounter;
@@ -87,7 +88,7 @@ namespace TelegramBOT
             list.Add("DISK Usage: " + diskCounter.NextValue() + "%");
             #endregion
 
-            list.Add("***** Service is running *****");
+            list.Add("***** TelegramBOT Service is running *****");
             return list;
         }
 
@@ -340,19 +341,21 @@ namespace TelegramBOT
                 help.Add(" ");
                 help.Add("3. For date noifications please type 'Date'.");
                 help.Add(" ");
-                help.Add("4. For weather noifications please type 'Weather place_name', E.g: Weather Chandigarh or Weather Delhi");
+                help.Add("4. For weather noifications please type 'Weather placename', E.g: Weather Chandigarh or Weather Delhi");
                 help.Add(" ");
                 help.Add("5. For covid report noifications please type below commands: ");
                 help.Add("      > For all over type: 'Covid All'");
-                help.Add("      > For state wise type: 'Covid State_Name' like Covid Chandigarh");
+                help.Add("      > For state wise type: 'Covid StateName' like Covid Chandigarh");
                 help.Add(" ");
                 help.Add("6. For searching please type 'Search Text', E.g: Search C#.NET");
                 help.Add(" ");
                 help.Add("7. For horoscope please type 'Horoscope SignName', E.g: Horoscope Leo");
                 help.Add(" ");
-                help.Add("8. For stocks please type 'Stock Stock_Symbol', E.g: Stock ITC");
+                help.Add("8. For stocks please type 'Stock StockSymbol', E.g: Stock ITC");
                 help.Add(" ");
                 help.Add("9. For gaming channel please type 'Ranzo'");
+                help.Add(" ");
+                help.Add("10. For PS5 availability alerts please type 'PS5 Update'");
                 await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, StringBuilder(help.ToArray()));
             }
             //else if (e.Message.Text.ToLower() == "chandigarh")
@@ -594,6 +597,22 @@ namespace TelegramBOT
             else if (e.Message.Text.ToLower() == "send alert")
             {
                 TelegramBotAlertSendInitiator(e);
+            }
+            else if (e.Message.Text.ToLower().Contains("ps5"))
+            {
+                var txt = e.Message.Text.Split(" ");
+                if (txt.Length > 1)
+                {
+                    TelegramBotPS5StockAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
+                }
+            }
+            else if (e.Message.Text.ToLower().Contains("insta360"))
+            {
+                var txt = e.Message.Text.Split(" ");
+                if (txt.Length > 1)
+                {
+                    TelegramBotInsta360GO2StockAPIInitiator(e.Message.Chat.Id, e.Message.Text.Split(' ', 2)[1], e);
+                }
             }
             else
             {
@@ -1774,6 +1793,60 @@ namespace TelegramBOT
             catch (Exception e)
             {
                 Console.WriteLine("An error occurred: " + e.Message);
+            }
+        }
+
+        public async static void TelegramBotPS5StockAPIInitiator(long ID, string stock, Telegram.Bot.Args.MessageEventArgs e = null)
+        {
+            WebReqInitiator Client = new WebReqInitiator();
+            while (true)
+            {
+                string req = Client.GetHTML("https://www.amazon.in/dp/B08FV5GC28/");
+                var data = !req.Contains("<span class=\"a-color-price a-text-bold\">Currently unavailable.</span>");
+                if (data)
+                {
+                    await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "PS5 is available! on https://www.amazon.in/dp/B08FV5GC28/");
+                }
+            }
+
+            //var client = new RestClient("https://www.amazon.in/dp/B08FV5GC28/");
+            //client.Timeout = -1;
+            //var request = new RestRequest(Method.GET);
+            //while (true)
+            //{
+            //    IRestResponse response = client.Execute(request);
+            //    var isAvailable = !response.Content.Contains("<span class=\"a-color-price a-text-bold\">Currently unavailable.</span>");
+            //    if(isAvailable)
+            //    {
+            //        await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "PS5 is available! on https://www.amazon.in/dp/B08FV5GC28/");
+            //    }
+            //}
+        }
+
+        public async static void TelegramBotInsta360GO2StockAPIInitiator(long ID, string stock, Telegram.Bot.Args.MessageEventArgs e = null)
+        {
+            //var client = new RestClient("https://www.amazon.in/dp/B08Y1P3CQ8");
+            //client.Timeout = -1;
+            //var request = new RestRequest(Method.GET);
+            //while (true)
+            //{
+            //    IRestResponse response = client.Execute(request);
+            //    var isAvailable = !response.Content.Contains("<span class=\"a-color-price a-text-bold\">Currently unavailable.</span>");
+            //    if (isAvailable)
+            //    {
+            //        await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Insta360 GO 2 is available! on https://www.amazon.in/dp/B08Y1P3CQ8");
+            //    }
+            //}
+
+            WebReqInitiator Client = new WebReqInitiator();
+            while (true)
+            {
+                string req = Client.GetHTML("https://www.amazon.in/dp/B08Y1P3CQ8/");
+                var data = !req.Contains("<span class=\"a-color-price a-text-bold\">Currently unavailable.</span>");
+                if (data)
+                {
+                    await telegramBotClient.SendTextMessageAsync(e.Message.Chat.Id, "Insta360 GO 2 is available! on https://www.amazon.in/dp/B08Y1P3CQ8");
+                }
             }
         }
 
